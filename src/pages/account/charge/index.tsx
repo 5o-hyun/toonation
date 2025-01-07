@@ -1,7 +1,26 @@
+import { useState } from "react";
 import { AiFillCloseCircle, AiFillPlusCircle } from "react-icons/ai";
 import { TiArrowSortedDown } from "react-icons/ti";
+import { prices } from "../../../lib/data/charge";
 
 const ChargePage = () => {
+  const [price, setPrice] = useState<number>(3000);
+
+  const onChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const parsePrice = (value: string) =>
+      parseInt(value.replace(/,/g, ""), 10) || 0;
+
+    setPrice(parsePrice(e.target.value));
+  };
+
+  const onClickReset = () => {
+    setPrice(0);
+  };
+
+  const onClickPlusPrice = (cash: number) => {
+    setPrice((prev) => prev + cash);
+  };
+
   return (
     <div className="m-5 border-[1px] border-solid w-96">
       <h1 className="bg-gray-100 text-center font-bold text-lg py-2">
@@ -11,25 +30,29 @@ const ChargePage = () => {
         <p className="font-bold text-[18px]">충전 금액</p>
         <div className="border-[1px] border-solid px-3 py-2 rounded-lg flex justify-between">
           <input
-            type="number"
-            value={3000}
+            value={price.toLocaleString()}
+            onChange={onChangePrice}
             className="text-xl font-bold w-60"
           />
           <div className="flex gap-2 items-center">
-            <AiFillCloseCircle className="w-5 h-5 text-gray-200 cursor-pointer" />
+            <AiFillCloseCircle
+              onClick={onClickReset}
+              className="w-5 h-5 text-gray-200 cursor-pointer"
+            />
             <b className="whitespace-nowrap">캐시</b>
           </div>
         </div>
         <div className="flex justify-between gap-2">
-          <button className="flex-1 border-[1px] border-solid rounded-lg py-2 bg-gray-50 text-gray-600 font-medium hover:bg-gray-200">
-            <span className="text-blue-400">+</span> 1,000
-          </button>
-          <button className="flex-1 border-[1px] border-solid rounded-lg py-2 bg-gray-50 text-gray-600 font-medium hover:bg-gray-200">
-            <span className="text-blue-400">+</span> 10,000
-          </button>
-          <button className="flex-1 border-[1px] border-solid rounded-lg py-2 bg-gray-50 text-gray-600 font-medium hover:bg-gray-200">
-            <span className="text-blue-400">+</span> 50,000
-          </button>
+          {prices.map((price) => (
+            <button
+              key={price.id}
+              onClick={() => onClickPlusPrice(price.cash)}
+              className="flex-1 border-[1px] border-solid rounded-lg py-2 bg-gray-50 text-gray-600 font-medium hover:bg-gray-200"
+            >
+              <span className="text-blue-400">+</span>
+              {price.cash.toLocaleString()}
+            </button>
+          ))}
         </div>
         <p className="text-[14px] text-gray-500">
           * 충전 금액은 1,000 캐시 단위로만 결제 가능합니다.
