@@ -51,7 +51,10 @@ const BottomSheet = ({ onChange, onClose }: Props) => {
           {payMethods.map((pay) => (
             <button
               key={pay.id}
-              onClick={() => onChange(pay.name)}
+              onClick={() => {
+                onChange(pay.name);
+                onClose();
+              }}
               className="flex flex-col items-center border-[1px] border-gray-300 rounded-lg py-2 bg-gray-50 gap-1 hover:bg-gray-200"
             >
               <img src={pay.imagePath} alt={pay.name} />

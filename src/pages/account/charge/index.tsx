@@ -8,6 +8,7 @@ import useToggle from "../../../lib/hook/useToggle";
 const ChargePage = () => {
   const [price, setPrice] = useState<number>(3000);
   const [payMethod, setPayMethod] = useState<string>("");
+  const [activeRadio, setActiveRadio] = useState<"korea" | "global">("korea");
   const [isOpenBottomSheet, toggleOpenBottomSheet] = useToggle();
 
   const onChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,7 +20,6 @@ const ChargePage = () => {
 
   const onChangePayMethod = (method: string) => {
     setPayMethod(method);
-    toggleOpenBottomSheet();
   };
 
   const onClickReset = () => {
@@ -28,6 +28,10 @@ const ChargePage = () => {
 
   const onClickPlusPrice = (cash: number) => {
     setPrice((prev) => prev + cash);
+  };
+
+  const onClickRadio = (value: "korea" | "global") => {
+    setActiveRadio(value);
   };
 
   return (
@@ -68,61 +72,127 @@ const ChargePage = () => {
         </p>
       </div>
       <div className="border-b-8 border-gray-100">
-        <div className="px-5 pt-5 flex justify-between">
+        <div className="p-5 flex justify-between">
           <p className="font-bold text-[18px]">결제수단</p>
-          <button
-            onClick={toggleOpenBottomSheet}
-            className="flex items-center border-[1px] px-3 py-1 rounded-lg font-medium"
-          >
-            결제수단변경
-            <TiArrowSortedDown className="w-5 h-5" />
-          </button>
+          {activeRadio === "korea" && (
+            <button
+              onClick={toggleOpenBottomSheet}
+              className="flex items-center border-[1px] px-3 py-1 rounded-lg font-medium"
+            >
+              결제수단변경
+              <TiArrowSortedDown className="w-5 h-5" />
+            </button>
+          )}
         </div>
         <div className="flex flex-col">
           <div className="px-5 flex gap-2 mb-3">
-            <input type="radio" id="option1" name="option" value="1" />
-            <label htmlFor="option1" className="font-bold">
+            <input
+              type="radio"
+              id="korea"
+              name="korea"
+              value="korea"
+              checked={activeRadio === "korea"}
+              onChange={() => onClickRadio("korea")}
+            />
+            <label htmlFor="korea" className="font-bold cursor-pointer">
               국내 결제
             </label>
           </div>
-          <div className="bg-gray-100 p-5 flex justify-center gap-3 mb-3 overflow-auto">
-            {payMethod !== "" ? (
-              <button className="bg-gray-50 w-60 h-36 rounded-lg shadow-md flex flex-col justify-center items-center gap-1">
-                <p className="text-[14px]">{payMethod}</p>
-              </button>
-            ) : (
-              <button
-                onClick={toggleOpenBottomSheet}
-                className="bg-gray-50 w-60 h-36 rounded-lg shadow-md flex flex-col justify-center items-center gap-1"
-              >
-                <AiFillPlusCircle className="w-7 h-7 text-blue-400" />
-                <p className="text-[14px]">결제수단 추가</p>
-              </button>
-            )}
-          </div>
+          {activeRadio === "korea" && (
+            <div className="bg-gray-100 p-5 flex justify-center gap-3 mb-3 overflow-auto">
+              {payMethod !== "" ? (
+                <button className="bg-gray-50 w-60 h-36 rounded-lg shadow-md flex flex-col justify-center items-center gap-1">
+                  <p className="text-[14px]">{payMethod}</p>
+                </button>
+              ) : (
+                <button
+                  onClick={toggleOpenBottomSheet}
+                  className="bg-gray-50 w-60 h-36 rounded-lg shadow-md flex flex-col justify-center items-center gap-1"
+                >
+                  <AiFillPlusCircle className="w-7 h-7 text-blue-400" />
+                  <p className="text-[14px]">결제수단 추가</p>
+                </button>
+              )}
+            </div>
+          )}
           <div className="px-5 flex gap-2 mb-3">
-            <input type="radio" id="option2" name="option" value="2" />
-            <label htmlFor="option2" className="font-bold">
+            <input
+              type="radio"
+              id="global"
+              name="global"
+              value="global"
+              checked={activeRadio === "global"}
+              onChange={() => onClickRadio("global")}
+            />
+            <label htmlFor="global" className="font-bold cursor-pointer">
               해외 결제
             </label>
           </div>
-          <div className="grid grid-cols-2 gap-2 px-5 pb-5">
-            <button className="border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200">
-              <b>신용카드</b>
-              <p className="text-[14px]">(VISA/MASTER/JCB)</p>
-            </button>
-            <button className="border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200">
-              <b>신용카드</b>
-              <p className="text-[14px]">(AMEX)</p>
-            </button>
-            <button className="border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200">
-              <b>유니온페이</b>
-            </button>
-            <button className="border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200">
-              <b>신용카드</b>
-              <p className="text-[14px]">(VISA/MASTER)</p>
-            </button>
-          </div>
+          {activeRadio === "global" && (
+            <div className="grid grid-cols-2 gap-2 px-5 pb-5">
+              <button
+                onClick={() => onChangePayMethod("신용카드(VISA/MASTER/JCB)")}
+                className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
+                  payMethod === "신용카드(VISA/MASTER/JCB)" &&
+                  "!bg-blue-100 border-blue-400 border-2"
+                }`}
+              >
+                <b
+                  className={`${
+                    payMethod === "신용카드(VISA/MASTER/JCB)" && "text-blue-400"
+                  }`}
+                >
+                  신용카드
+                </b>
+                <p className="text-[14px]">(VISA/MASTER/JCB)</p>
+              </button>
+              <button
+                onClick={() => onChangePayMethod("신용카드(AMEX)")}
+                className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
+                  payMethod === "신용카드(AMEX)" &&
+                  "!bg-blue-100 border-blue-400 border-2"
+                }`}
+              >
+                <b
+                  className={`${
+                    payMethod === "신용카드(VISA/MASTER/JCB)" && "text-blue-400"
+                  }`}
+                >
+                  신용카드
+                </b>
+                <p className="text-[14px]">(AMEX)</p>
+              </button>
+              <button
+                onClick={() => onChangePayMethod("유니온페이")}
+                className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
+                  payMethod === "유니온페이" &&
+                  "!bg-blue-100 border-blue-400 border-2"
+                }`}
+              >
+                <b
+                  className={`${payMethod === "유니온페이" && "text-blue-400"}`}
+                >
+                  유니온페이
+                </b>
+              </button>
+              <button
+                onClick={() => onChangePayMethod("신용카드(VISA/MASTER)")}
+                className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
+                  payMethod === "신용카드(VISA/MASTER)" &&
+                  "!bg-blue-100 border-blue-400 border-2"
+                }`}
+              >
+                <b
+                  className={`${
+                    payMethod === "신용카드(VISA/MASTER)" && "text-blue-400"
+                  }`}
+                >
+                  신용카드
+                </b>
+                <p className="text-[14px]">(VISA/MASTER)</p>
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className="p-5">
@@ -138,7 +208,10 @@ const ChargePage = () => {
             완료된 후 캐시 충전 서비스 이용이 가능합니다.
           </p>
         </div>
-        <button className="bg-blue-400 w-full py-3 text-white font-bold text-[18px] rounded-lg">
+        <button
+          disabled={payMethod === "" || price === 0}
+          className="bg-blue-400 w-full py-3 text-white font-bold text-[18px] rounded-lg disabled:bg-blue-300 disabled:cursor-not-allowed"
+        >
           충전하기
         </button>
       </div>
