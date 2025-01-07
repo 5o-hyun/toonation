@@ -4,12 +4,14 @@ import { TiArrowSortedDown } from "react-icons/ti";
 import { prices } from "../../../lib/data/charge";
 import BottomSheet from "../../../components/account/charge/BottomSheet";
 import useToggle from "../../../lib/hook/useToggle";
+import { useNavigate } from "react-router-dom";
 
 const ChargePage = () => {
   const [price, setPrice] = useState<number>(3000);
   const [payMethod, setPayMethod] = useState<string>("");
   const [activeRadio, setActiveRadio] = useState<"korea" | "global">("korea");
   const [isOpenBottomSheet, toggleOpenBottomSheet] = useToggle();
+  const navigate = useNavigate();
 
   const onChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     const parsePrice = (value: string) =>
@@ -32,6 +34,14 @@ const ChargePage = () => {
 
   const onClickRadio = (value: "korea" | "global") => {
     setActiveRadio(value);
+  };
+
+  const onSubmit = () => {
+    if (payMethod === "문화상품권") {
+      return navigate("/account/charge/culturepay");
+    }
+
+    navigate("/account/charge/success");
   };
 
   return (
@@ -198,7 +208,7 @@ const ChargePage = () => {
       <div className="p-5">
         <div className="flex justify-between mb-3 text-[18px] mb-5">
           <b>최종 결제 금액</b>
-          <b>3,300원</b>
+          <b>{(price * 1.1).toLocaleString()}원</b>
         </div>
         <div className="text-[14px] text-gray-500 mb-5">
           <p>* 캐시 유효기간: 마지막 사용일로부터 5년</p>
@@ -209,7 +219,8 @@ const ChargePage = () => {
           </p>
         </div>
         <button
-          disabled={payMethod === "" || price === 0}
+          disabled={payMethod === "" || price <= 1000}
+          onClick={onSubmit}
           className="bg-blue-400 w-full py-3 text-white font-bold text-[18px] rounded-lg disabled:bg-blue-300 disabled:cursor-not-allowed"
         >
           충전하기
