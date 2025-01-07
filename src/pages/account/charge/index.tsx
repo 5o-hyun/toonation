@@ -2,15 +2,24 @@ import { useState } from "react";
 import { AiFillCloseCircle, AiFillPlusCircle } from "react-icons/ai";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { prices } from "../../../lib/data/charge";
+import BottomSheet from "../../../components/account/charge/BottomSheet";
+import useToggle from "../../../lib/hook/useToggle";
 
 const ChargePage = () => {
   const [price, setPrice] = useState<number>(3000);
+  const [payMethod, setPayMethod] = useState<string>("");
+  const [isOpenBottomSheet, toggleOpenBottomSheet] = useToggle();
 
   const onChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     const parsePrice = (value: string) =>
       parseInt(value.replace(/,/g, ""), 10) || 0;
 
     setPrice(parsePrice(e.target.value));
+  };
+
+  const onChangePayMethod = (method: string) => {
+    setPayMethod(method);
+    toggleOpenBottomSheet();
   };
 
   const onClickReset = () => {
@@ -22,7 +31,7 @@ const ChargePage = () => {
   };
 
   return (
-    <div className="m-5 border-[1px] border-solid w-96">
+    <div className="relative m-5 border-[1px] border-solid w-96">
       <h1 className="bg-gray-100 text-center font-bold text-lg py-2">
         충전하기
       </h1>
@@ -61,7 +70,10 @@ const ChargePage = () => {
       <div className="border-b-8 border-gray-100">
         <div className="px-5 pt-5 flex justify-between">
           <p className="font-bold text-[18px]">결제수단</p>
-          <button className="flex items-center border-[1px] px-3 py-1 rounded-lg font-medium">
+          <button
+            onClick={toggleOpenBottomSheet}
+            className="flex items-center border-[1px] px-3 py-1 rounded-lg font-medium"
+          >
             결제수단변경
             <TiArrowSortedDown className="w-5 h-5" />
           </button>
@@ -73,11 +85,20 @@ const ChargePage = () => {
               국내 결제
             </label>
           </div>
-          <div className="bg-gray-100 p-5 grid place-items-center mb-3">
-            <button className="bg-gray-50 w-60 h-36 rounded-lg shadow-md flex flex-col justify-center items-center gap-1">
-              <AiFillPlusCircle className="w-7 h-7 text-blue-400" />
-              <p className="text-[14px]">결제수단 추가</p>
-            </button>
+          <div className="bg-gray-100 p-5 flex justify-center gap-3 mb-3 overflow-auto">
+            {payMethod !== "" ? (
+              <button className="bg-gray-50 w-60 h-36 rounded-lg shadow-md flex flex-col justify-center items-center gap-1">
+                <p className="text-[14px]">{payMethod}</p>
+              </button>
+            ) : (
+              <button
+                onClick={toggleOpenBottomSheet}
+                className="bg-gray-50 w-60 h-36 rounded-lg shadow-md flex flex-col justify-center items-center gap-1"
+              >
+                <AiFillPlusCircle className="w-7 h-7 text-blue-400" />
+                <p className="text-[14px]">결제수단 추가</p>
+              </button>
+            )}
           </div>
           <div className="px-5 flex gap-2 mb-3">
             <input type="radio" id="option2" name="option" value="2" />
@@ -121,6 +142,12 @@ const ChargePage = () => {
           충전하기
         </button>
       </div>
+      {isOpenBottomSheet && (
+        <BottomSheet
+          onChange={onChangePayMethod}
+          onClose={toggleOpenBottomSheet}
+        />
+      )}
     </div>
   );
 };
