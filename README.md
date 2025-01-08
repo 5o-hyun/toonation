@@ -1,50 +1,24 @@
-# React + TypeScript + Vite
+## 실행 방법
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+터미널에 다음과 같이 입력시 `localhost:3000`으로 실행됩니다.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 경로
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+구현 기본경로는 다음과 같습니다. <br/>
+홈 화면에 바로가기 버튼이 있으니 클릭해주셔서 이동해주시면됩니다.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
 ```
+/account/charge
+```
+
+## 참고
+
+`localStorage`에 데이터를 저장하여 클라이언트측에서 데이터를 다룰 수 있게 구현했습니다.<br/>
+실제 저장된 값을 불러오는것이 아니기때문에 로직상으로 모든 개발을 진행했습니다.<br/>
+
+`price` : 총 충전 금액 <br/>
+`payMethod` : 마지막 결제 방법
