@@ -41,7 +41,7 @@ const ChargePage = () => {
       return navigate("/account/charge/culturepay");
     }
 
-    navigate("/account/charge/success");
+    navigate(`/account/charge/success?price=${price}`);
   };
 
   return (

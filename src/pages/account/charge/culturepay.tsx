@@ -105,7 +105,9 @@ const CulturePayPage = () => {
         </button>
         <button
           disabled={price < 5000 || !isAgree}
-          onClick={() => navigate("/account/charge/success")}
+          onClick={() =>
+            navigate(`/account/charge/success?price=${price - price * 0.1}`)
+          }
           className="bg-blue-400 w-full py-3 text-white font-bold text-[18px] rounded-lg disabled:bg-blue-300 disabled:cursor-not-allowed"
         >
           충전하기

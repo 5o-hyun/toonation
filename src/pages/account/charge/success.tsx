@@ -1,8 +1,20 @@
+import { useEffect, useState } from "react";
 import { IoIosCheckmarkCircle } from "react-icons/io";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ChargeSuccessPage = () => {
+  const [totalPrice, setTotalPrice] = useState<number>(0);
   const navigate = useNavigate();
+  const { search } = useLocation();
+  const price = new URLSearchParams(search).get("price");
+
+  useEffect(() => {
+    const storedPrice = Number(localStorage.getItem("price"));
+    const updatePrice = storedPrice + Number(price);
+
+    localStorage.setItem("price", updatePrice.toString());
+    setTotalPrice(updatePrice);
+  }, []);
 
   return (
     <div className="relative m-5 border-[1px] border-solid w-96">
@@ -19,9 +31,10 @@ const ChargeSuccessPage = () => {
         </div>
         <div className="w-1/2">
           <p className="p-3 font-bold">
-            <b className="text-blue-400">1,000</b> 캐시
+            <b className="text-blue-400">{Number(price).toLocaleString()}</b>{" "}
+            캐시
           </p>
-          <p className="p-3 font-bold">750,000 캐시</p>
+          <p className="p-3 font-bold">{totalPrice.toLocaleString()} 캐시</p>
         </div>
       </div>
       <button
