@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillCloseCircle, AiFillPlusCircle } from "react-icons/ai";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { prices } from "../../../lib/data/charge";
@@ -8,7 +8,10 @@ import { useNavigate } from "react-router-dom";
 
 const ChargePage = () => {
   const [price, setPrice] = useState<number>(3000);
-  const [payMethod, setPayMethod] = useState<string>("");
+  const [payMethod, setPayMethod] = useState<{ name: string; nation: string }>({
+    name: "",
+    nation: "",
+  });
   const [activeRadio, setActiveRadio] = useState<"korea" | "global">("korea");
   const [isOpenBottomSheet, toggleOpenBottomSheet] = useToggle();
   const navigate = useNavigate();
@@ -20,8 +23,10 @@ const ChargePage = () => {
     setPrice(parsePrice(e.target.value));
   };
 
-  const onChangePayMethod = (method: string) => {
-    setPayMethod(method);
+  const onChangePayMethod = (name: string, nation: string) => {
+    setPayMethod({ name, nation });
+
+    localStorage.setItem("payMethod", name);
   };
 
   const onClickReset = () => {
@@ -32,17 +37,40 @@ const ChargePage = () => {
     setPrice((prev) => prev + cash);
   };
 
-  const onClickRadio = (value: "korea" | "global") => {
-    setActiveRadio(value);
+  const onClickRadio = (nation: "korea" | "global") => {
+    setActiveRadio(nation);
   };
 
   const onSubmit = () => {
-    if (payMethod === "문화상품권") {
+    if (payMethod.name === "문화상품권") {
       return navigate("/account/charge/culturepay");
     }
 
     navigate(`/account/charge/success?price=${price}`);
   };
+  useEffect(() => {
+    const localStoragePayMethod = localStorage.getItem("payMethod");
+    const koreaMethod = ["네이버페이", "카카오페이", "토스페이", "문화상품권"];
+    const globalMethod = [
+      "신용카드(VISA/MASTER/JCB)",
+      "신용카드(AMEX)",
+      "유니온페이",
+      "신용카드(VISA/MASTER)",
+    ];
+
+    if (localStoragePayMethod) {
+      if (koreaMethod.includes(localStoragePayMethod)) {
+        setPayMethod({ name: String(localStoragePayMethod), nation: "korea" });
+        setActiveRadio("korea");
+        return;
+      }
+      if (globalMethod.includes(localStoragePayMethod)) {
+        setPayMethod({ name: String(localStoragePayMethod), nation: "global" });
+        setActiveRadio("global");
+        return;
+      }
+    }
+  }, []);
 
   return (
     <div className="relative m-5 border-[1px] border-solid w-96">
@@ -110,9 +138,9 @@ const ChargePage = () => {
           </div>
           {activeRadio === "korea" && (
             <div className="bg-gray-100 p-5 flex justify-center gap-3 mb-3 overflow-auto">
-              {payMethod !== "" ? (
+              {payMethod.nation === "korea" ? (
                 <button className="bg-gray-50 w-60 h-36 rounded-lg shadow-md flex flex-col justify-center items-center gap-1">
-                  <p className="text-[14px]">{payMethod}</p>
+                  <p className="text-[14px]">{payMethod.name}</p>
                 </button>
               ) : (
                 <button
@@ -141,15 +169,18 @@ const ChargePage = () => {
           {activeRadio === "global" && (
             <div className="grid grid-cols-2 gap-2 px-5 pb-5">
               <button
-                onClick={() => onChangePayMethod("신용카드(VISA/MASTER/JCB)")}
+                onClick={() =>
+                  onChangePayMethod("신용카드(VISA/MASTER/JCB)", "global")
+                }
                 className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
-                  payMethod === "신용카드(VISA/MASTER/JCB)" &&
+                  payMethod.name === "신용카드(VISA/MASTER/JCB)" &&
                   "!bg-blue-100 border-blue-400 border-2"
                 }`}
               >
                 <b
                   className={`${
-                    payMethod === "신용카드(VISA/MASTER/JCB)" && "text-blue-400"
+                    payMethod.name === "신용카드(VISA/MASTER/JCB)" &&
+                    "text-blue-400"
                   }`}
                 >
                   신용카드
@@ -157,15 +188,16 @@ const ChargePage = () => {
                 <p className="text-[14px]">(VISA/MASTER/JCB)</p>
               </button>
               <button
-                onClick={() => onChangePayMethod("신용카드(AMEX)")}
+                onClick={() => onChangePayMethod("신용카드(AMEX)", "global")}
                 className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
-                  payMethod === "신용카드(AMEX)" &&
+                  payMethod.name === "신용카드(AMEX)" &&
                   "!bg-blue-100 border-blue-400 border-2"
                 }`}
               >
                 <b
                   className={`${
-                    payMethod === "신용카드(VISA/MASTER/JCB)" && "text-blue-400"
+                    payMethod.name === "신용카드(VISA/MASTER/JCB)" &&
+                    "text-blue-400"
                   }`}
                 >
                   신용카드
@@ -173,28 +205,33 @@ const ChargePage = () => {
                 <p className="text-[14px]">(AMEX)</p>
               </button>
               <button
-                onClick={() => onChangePayMethod("유니온페이")}
+                onClick={() => onChangePayMethod("유니온페이", "global")}
                 className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
-                  payMethod === "유니온페이" &&
-                  "!bg-blue-100 border-blue-400 border-2"
-                }`}
-              >
-                <b
-                  className={`${payMethod === "유니온페이" && "text-blue-400"}`}
-                >
-                  유니온페이
-                </b>
-              </button>
-              <button
-                onClick={() => onChangePayMethod("신용카드(VISA/MASTER)")}
-                className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
-                  payMethod === "신용카드(VISA/MASTER)" &&
+                  payMethod.name === "유니온페이" &&
                   "!bg-blue-100 border-blue-400 border-2"
                 }`}
               >
                 <b
                   className={`${
-                    payMethod === "신용카드(VISA/MASTER)" && "text-blue-400"
+                    payMethod.name === "유니온페이" && "text-blue-400"
+                  }`}
+                >
+                  유니온페이
+                </b>
+              </button>
+              <button
+                onClick={() =>
+                  onChangePayMethod("신용카드(VISA/MASTER)", "global")
+                }
+                className={`border-[1px] bg-gray-50 rounded-lg text-gray-500 py-2 leading-5 hover:bg-gray-200 ${
+                  payMethod.name === "신용카드(VISA/MASTER)" &&
+                  "!bg-blue-100 border-blue-400 border-2"
+                }`}
+              >
+                <b
+                  className={`${
+                    payMethod.name === "신용카드(VISA/MASTER)" &&
+                    "text-blue-400"
                   }`}
                 >
                   신용카드
@@ -219,7 +256,7 @@ const ChargePage = () => {
           </p>
         </div>
         <button
-          disabled={payMethod === "" || price <= 1000}
+          disabled={payMethod.name === "" || price <= 1000}
           onClick={onSubmit}
           className="bg-blue-400 w-full py-3 text-white font-bold text-[18px] rounded-lg disabled:bg-blue-300 disabled:cursor-not-allowed"
         >

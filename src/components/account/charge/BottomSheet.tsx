@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 type Props = {
-  onChange: (method: string) => void;
+  onChange: (method: string, nation: string) => void;
   onClose: () => void;
 };
 
@@ -52,7 +52,7 @@ const BottomSheet = ({ onChange, onClose }: Props) => {
             <button
               key={pay.id}
               onClick={() => {
-                onChange(pay.name);
+                onChange(pay.name, "korea");
                 onClose();
               }}
               className="flex flex-col items-center border-[1px] border-gray-300 rounded-lg py-2 bg-gray-50 gap-1 hover:bg-gray-200"
